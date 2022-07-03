@@ -12,11 +12,11 @@ entity Environments {
 @cds.autoexpose
 @cds.odata.valuelist
 entity Functions {
-        environment   : Association to one Environments;
     key ID            : UUID @odata.Type : 'Edm.String'  @UI.Hidden;
+        environment   : Association to one Environments;
+        function      : String;
         type          : Association to one FunctionTypes;
         description   : String;
-        // @NX.valuehelp :                    `(inputFunction.ID <> $self.ID)`
         inputFunction : Association to one FunctionsVH;
         inputFields   : Composition of many FunctionInputFields
                             on inputFields.function = $self;
@@ -28,35 +28,31 @@ entity Functions {
 @cds.autoexpose
 @cds.odata.valuelist
 entity Fields {
-        environment : Association to one Environments;
     key ID          : UUID @odata.Type : 'Edm.String'  @UI.Hidden;
+        environment : Association to one Environments;
         description : String;
 }
 
 @cds.autoexpose
 @cds.odata.valuelist
- // Don't use projection, as YO generators get confused
-entity FunctionsVH as
-    select from Functions {
-        environment,
-        ID,
-        type,
-        description,
-        '' || ID as parameter1 // Cheat, otherwise CDS would treat it as additional primary key
-    }
-    where
-        (
-            type.code in (
-                'MT', 'AL', 'CA')
-            );
+entity FunctionsVH as projection on Functions {
+    environment,
+    ID,
+    type,
+    description,
+    ID as parameter1 : String
+} where(
+    type.code in (
+        'MT', 'AL', 'CA')
+    );
 
 
 @cds.autoexpose
 @cds.odata.valuelist
 entity FunctionInputFields {
+    key ID            : UUID @odata.Type : 'Edm.String'  @UI.Hidden;
         environment   : Association to one Environments;
         function      : Association to one Functions;
-    key ID            : UUID @odata.Type : 'Edm.String'  @UI.Hidden;
         inputFunction : Association to one Functions;
         field         : Association to one Fields;
 }
@@ -64,9 +60,9 @@ entity FunctionInputFields {
 @cds.autoexpose
 @cds.odata.valuelist
 entity FunctionResultFields {
+    key ID          : UUID @odata.Type : 'Edm.String'  @UI.Hidden;
         environment : Association to one Environments;
         function    : Association to one Functions;
-    key ID          : UUID @odata.Type : 'Edm.String'  @UI.Hidden;
         field       : Association to one Fields;
 }
 

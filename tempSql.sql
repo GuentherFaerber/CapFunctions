@@ -8,8 +8,9 @@ CREATE TABLE Environments (
 );
 
 CREATE TABLE Functions (
-  environment_ID NVARCHAR(36),
   ID NVARCHAR(36) NOT NULL,
+  environment_ID NVARCHAR(36),
+  function NVARCHAR(5000),
   type_code NVARCHAR(10) DEFAULT 'AL',
   description NVARCHAR(5000),
   inputFunction_ID NVARCHAR(36),
@@ -17,25 +18,25 @@ CREATE TABLE Functions (
 );
 
 CREATE TABLE Fields (
-  environment_ID NVARCHAR(36),
   ID NVARCHAR(36) NOT NULL,
+  environment_ID NVARCHAR(36),
   description NVARCHAR(5000),
   PRIMARY KEY(ID)
 );
 
 CREATE TABLE FunctionInputFields (
+  ID NVARCHAR(36) NOT NULL,
   environment_ID NVARCHAR(36),
   function_ID NVARCHAR(36),
-  ID NVARCHAR(36) NOT NULL,
   inputFunction_ID NVARCHAR(36),
   field_ID NVARCHAR(36),
   PRIMARY KEY(ID)
 );
 
 CREATE TABLE FunctionResultFields (
+  ID NVARCHAR(36) NOT NULL,
   environment_ID NVARCHAR(36),
   function_ID NVARCHAR(36),
-  ID NVARCHAR(36) NOT NULL,
   field_ID NVARCHAR(36),
   PRIMARY KEY(ID)
 );
@@ -68,8 +69,9 @@ CREATE TABLE DRAFT_DraftAdministrativeData (
 );
 
 CREATE TABLE ModelingService_Functions_drafts (
-  environment_ID NVARCHAR(36) NULL,
   ID NVARCHAR(36) NOT NULL,
+  environment_ID NVARCHAR(36) NULL,
+  function NVARCHAR(5000) NULL,
   type_code NVARCHAR(10) NULL DEFAULT 'AL',
   description NVARCHAR(5000) NULL,
   inputFunction_ID NVARCHAR(36) NULL,
@@ -81,9 +83,9 @@ CREATE TABLE ModelingService_Functions_drafts (
 );
 
 CREATE TABLE ModelingService_FunctionInputFields_drafts (
+  ID NVARCHAR(36) NOT NULL,
   environment_ID NVARCHAR(36) NULL,
   function_ID NVARCHAR(36) NULL,
-  ID NVARCHAR(36) NOT NULL,
   inputFunction_ID NVARCHAR(36) NULL,
   field_ID NVARCHAR(36) NULL,
   IsActiveEntity BOOLEAN,
@@ -94,9 +96,9 @@ CREATE TABLE ModelingService_FunctionInputFields_drafts (
 );
 
 CREATE TABLE ModelingService_FunctionResultFields_drafts (
+  ID NVARCHAR(36) NOT NULL,
   environment_ID NVARCHAR(36) NULL,
   function_ID NVARCHAR(36) NULL,
-  ID NVARCHAR(36) NOT NULL,
   field_ID NVARCHAR(36) NULL,
   IsActiveEntity BOOLEAN,
   HasActiveEntity BOOLEAN,
@@ -106,8 +108,9 @@ CREATE TABLE ModelingService_FunctionResultFields_drafts (
 );
 
 CREATE VIEW ModelingService_Functions AS SELECT
-  functions_0.environment_ID,
   functions_0.ID,
+  functions_0.environment_ID,
+  functions_0.function,
   functions_0.type_code,
   functions_0.description,
   functions_0.inputFunction_ID
@@ -118,7 +121,7 @@ CREATE VIEW FunctionsVH AS SELECT
   Functions_0.ID,
   Functions_0.type_code,
   Functions_0.description,
-  '' || Functions_0.ID AS parameter1
+  Functions_0.ID AS parameter1
 FROM Functions AS Functions_0
 WHERE Functions_0.type_code IN ('MT', 'AL', 'CA');
 
@@ -136,17 +139,17 @@ CREATE VIEW ModelingService_FunctionTypes AS SELECT
 FROM FunctionTypes AS FunctionTypes_0;
 
 CREATE VIEW ModelingService_FunctionInputFields AS SELECT
+  FunctionInputFields_0.ID,
   FunctionInputFields_0.environment_ID,
   FunctionInputFields_0.function_ID,
-  FunctionInputFields_0.ID,
   FunctionInputFields_0.inputFunction_ID,
   FunctionInputFields_0.field_ID
 FROM FunctionInputFields AS FunctionInputFields_0;
 
 CREATE VIEW ModelingService_FunctionResultFields AS SELECT
+  FunctionResultFields_0.ID,
   FunctionResultFields_0.environment_ID,
   FunctionResultFields_0.function_ID,
-  FunctionResultFields_0.ID,
   FunctionResultFields_0.field_ID
 FROM FunctionResultFields AS FunctionResultFields_0;
 
@@ -158,8 +161,8 @@ CREATE VIEW ModelingService_FunctionTypes_texts AS SELECT
 FROM FunctionTypes_texts AS texts_0;
 
 CREATE VIEW ModelingService_Fields AS SELECT
-  Fields_0.environment_ID,
   Fields_0.ID,
+  Fields_0.environment_ID,
   Fields_0.description
 FROM Fields AS Fields_0;
 
@@ -170,25 +173,26 @@ CREATE VIEW localized_FunctionTypes AS SELECT
 FROM (FunctionTypes AS L_0 LEFT JOIN FunctionTypes_texts AS localized_1 ON localized_1.code = L_0.code AND localized_1.locale = 'en');
 
 CREATE VIEW localized_Functions AS SELECT
-  L.environment_ID,
   L.ID,
+  L.environment_ID,
+  L.function,
   L.type_code,
   L.description,
   L.inputFunction_ID
 FROM Functions AS L;
 
 CREATE VIEW localized_FunctionInputFields AS SELECT
+  L.ID,
   L.environment_ID,
   L.function_ID,
-  L.ID,
   L.inputFunction_ID,
   L.field_ID
 FROM FunctionInputFields AS L;
 
 CREATE VIEW localized_FunctionResultFields AS SELECT
+  L.ID,
   L.environment_ID,
   L.function_ID,
-  L.ID,
   L.field_ID
 FROM FunctionResultFields AS L;
 
@@ -216,7 +220,7 @@ CREATE VIEW localized_FunctionsVH AS SELECT
   Functions_0.ID,
   Functions_0.type_code,
   Functions_0.description,
-  '' || Functions_0.ID AS parameter1
+  Functions_0.ID AS parameter1
 FROM localized_Functions AS Functions_0
 WHERE Functions_0.type_code IN ('MT', 'AL', 'CA');
 
@@ -227,25 +231,26 @@ CREATE VIEW localized_ModelingService_FunctionTypes AS SELECT
 FROM localized_FunctionTypes AS FunctionTypes_0;
 
 CREATE VIEW localized_ModelingService_Functions AS SELECT
-  functions_0.environment_ID,
   functions_0.ID,
+  functions_0.environment_ID,
+  functions_0.function,
   functions_0.type_code,
   functions_0.description,
   functions_0.inputFunction_ID
 FROM localized_Functions AS functions_0;
 
 CREATE VIEW localized_ModelingService_FunctionInputFields AS SELECT
+  FunctionInputFields_0.ID,
   FunctionInputFields_0.environment_ID,
   FunctionInputFields_0.function_ID,
-  FunctionInputFields_0.ID,
   FunctionInputFields_0.inputFunction_ID,
   FunctionInputFields_0.field_ID
 FROM localized_FunctionInputFields AS FunctionInputFields_0;
 
 CREATE VIEW localized_ModelingService_FunctionResultFields AS SELECT
+  FunctionResultFields_0.ID,
   FunctionResultFields_0.environment_ID,
   FunctionResultFields_0.function_ID,
-  FunctionResultFields_0.ID,
   FunctionResultFields_0.field_ID
 FROM localized_FunctionResultFields AS FunctionResultFields_0;
 
@@ -270,48 +275,50 @@ CREATE VIEW localized_fr_FunctionTypes AS SELECT
 FROM (FunctionTypes AS L_0 LEFT JOIN FunctionTypes_texts AS localized_fr_1 ON localized_fr_1.code = L_0.code AND localized_fr_1.locale = 'fr');
 
 CREATE VIEW localized_de_Functions AS SELECT
-  L.environment_ID,
   L.ID,
+  L.environment_ID,
+  L.function,
   L.type_code,
   L.description,
   L.inputFunction_ID
 FROM Functions AS L;
 
 CREATE VIEW localized_fr_Functions AS SELECT
-  L.environment_ID,
   L.ID,
+  L.environment_ID,
+  L.function,
   L.type_code,
   L.description,
   L.inputFunction_ID
 FROM Functions AS L;
 
 CREATE VIEW localized_de_FunctionInputFields AS SELECT
+  L.ID,
   L.environment_ID,
   L.function_ID,
-  L.ID,
   L.inputFunction_ID,
   L.field_ID
 FROM FunctionInputFields AS L;
 
 CREATE VIEW localized_fr_FunctionInputFields AS SELECT
+  L.ID,
   L.environment_ID,
   L.function_ID,
-  L.ID,
   L.inputFunction_ID,
   L.field_ID
 FROM FunctionInputFields AS L;
 
 CREATE VIEW localized_de_FunctionResultFields AS SELECT
+  L.ID,
   L.environment_ID,
   L.function_ID,
-  L.ID,
   L.field_ID
 FROM FunctionResultFields AS L;
 
 CREATE VIEW localized_fr_FunctionResultFields AS SELECT
+  L.ID,
   L.environment_ID,
   L.function_ID,
-  L.ID,
   L.field_ID
 FROM FunctionResultFields AS L;
 
@@ -320,7 +327,7 @@ CREATE VIEW localized_de_FunctionsVH AS SELECT
   Functions_0.ID,
   Functions_0.type_code,
   Functions_0.description,
-  '' || Functions_0.ID AS parameter1
+  Functions_0.ID AS parameter1
 FROM localized_de_Functions AS Functions_0
 WHERE Functions_0.type_code IN ('MT', 'AL', 'CA');
 
@@ -329,7 +336,7 @@ CREATE VIEW localized_fr_FunctionsVH AS SELECT
   Functions_0.ID,
   Functions_0.type_code,
   Functions_0.description,
-  '' || Functions_0.ID AS parameter1
+  Functions_0.ID AS parameter1
 FROM localized_fr_Functions AS Functions_0
 WHERE Functions_0.type_code IN ('MT', 'AL', 'CA');
 
@@ -346,48 +353,50 @@ CREATE VIEW localized_fr_ModelingService_FunctionTypes AS SELECT
 FROM localized_fr_FunctionTypes AS FunctionTypes_0;
 
 CREATE VIEW localized_de_ModelingService_Functions AS SELECT
-  functions_0.environment_ID,
   functions_0.ID,
+  functions_0.environment_ID,
+  functions_0.function,
   functions_0.type_code,
   functions_0.description,
   functions_0.inputFunction_ID
 FROM localized_de_Functions AS functions_0;
 
 CREATE VIEW localized_fr_ModelingService_Functions AS SELECT
-  functions_0.environment_ID,
   functions_0.ID,
+  functions_0.environment_ID,
+  functions_0.function,
   functions_0.type_code,
   functions_0.description,
   functions_0.inputFunction_ID
 FROM localized_fr_Functions AS functions_0;
 
 CREATE VIEW localized_de_ModelingService_FunctionInputFields AS SELECT
+  FunctionInputFields_0.ID,
   FunctionInputFields_0.environment_ID,
   FunctionInputFields_0.function_ID,
-  FunctionInputFields_0.ID,
   FunctionInputFields_0.inputFunction_ID,
   FunctionInputFields_0.field_ID
 FROM localized_de_FunctionInputFields AS FunctionInputFields_0;
 
 CREATE VIEW localized_fr_ModelingService_FunctionInputFields AS SELECT
+  FunctionInputFields_0.ID,
   FunctionInputFields_0.environment_ID,
   FunctionInputFields_0.function_ID,
-  FunctionInputFields_0.ID,
   FunctionInputFields_0.inputFunction_ID,
   FunctionInputFields_0.field_ID
 FROM localized_fr_FunctionInputFields AS FunctionInputFields_0;
 
 CREATE VIEW localized_de_ModelingService_FunctionResultFields AS SELECT
+  FunctionResultFields_0.ID,
   FunctionResultFields_0.environment_ID,
   FunctionResultFields_0.function_ID,
-  FunctionResultFields_0.ID,
   FunctionResultFields_0.field_ID
 FROM localized_de_FunctionResultFields AS FunctionResultFields_0;
 
 CREATE VIEW localized_fr_ModelingService_FunctionResultFields AS SELECT
+  FunctionResultFields_0.ID,
   FunctionResultFields_0.environment_ID,
   FunctionResultFields_0.function_ID,
-  FunctionResultFields_0.ID,
   FunctionResultFields_0.field_ID
 FROM localized_fr_FunctionResultFields AS FunctionResultFields_0;
 
