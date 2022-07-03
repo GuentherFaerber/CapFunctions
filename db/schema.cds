@@ -3,15 +3,17 @@ using {sap.common.CodeList} from '@sap/cds/common';
 @cds.autoexpose
 @cds.odata.valuelist
 entity Environments {
-    key ID: UUID;
+    key ID: UUID @odata.Type : 'Edm.String';
     environment: String;
     version: String;
     description: String; 
 }
 
+@cds.autoexpose
+@cds.odata.valuelist
 entity Functions {
     environment: Association to one Environments;
-    key ID            : UUID;
+    key ID            : UUID @odata.Type : 'Edm.String';
         type          : Association to one FunctionTypes;
         description   : String;
         inputFunction : Association to one Functions;
@@ -20,7 +22,7 @@ entity Functions {
 }
 
 entity FunctionInputFields {
-    key ID       : UUID;
+    key ID       : UUID @odata.Type : 'Edm.String';
         function : Association to one Functions;
         field    : String;
 }
