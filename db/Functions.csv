@@ -1,0 +1,9 @@
+ENVIRONMENT_ID;ID;TYPE_CODE;DESCRIPTION
+1;1;MT;Model Table SXP 1
+1;2;MT;Model Table SXP 2
+1;3;CA;Calculation SXP 1
+1;4;AL;Allocation SXP 1
+2;5;MT;Model Table SXT 1
+2;6;MT;Model Table SXT 2
+2;7;CA;Calculation SXT 1
+2;8;AL;Allocation SXT 1
