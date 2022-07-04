@@ -1,0 +1,648 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+        <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+        <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
+        <edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Validation.V1.xml">
+        <edmx:Include Alias="Validation" Namespace="Org.OData.Validation.V1"/>
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema Namespace="ModelingService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <EntityContainer Name="EntityContainer">
+                <EntitySet Name="Functions" EntityType="ModelingService.Functions">
+                    <NavigationPropertyBinding Path="environment" Target="Environments"/>
+                    <NavigationPropertyBinding Path="type" Target="FunctionTypes"/>
+                    <NavigationPropertyBinding Path="inputFunction" Target="FunctionsVH"/>
+                    <NavigationPropertyBinding Path="inputFields" Target="FunctionInputFields"/>
+                    <NavigationPropertyBinding Path="resultFields" Target="FunctionResultFields"/>
+                    <NavigationPropertyBinding Path="SiblingEntity" Target="Functions"/>
+                </EntitySet>
+                <EntitySet Name="Environments" EntityType="ModelingService.Environments"/>
+                <EntitySet Name="FunctionTypes" EntityType="ModelingService.FunctionTypes">
+                    <NavigationPropertyBinding Path="texts" Target="FunctionTypes_texts"/>
+                    <NavigationPropertyBinding Path="localized" Target="FunctionTypes_texts"/>
+                </EntitySet>
+                <EntitySet Name="FunctionsVH" EntityType="ModelingService.FunctionsVH">
+                    <NavigationPropertyBinding Path="environment" Target="Environments"/>
+                    <NavigationPropertyBinding Path="type" Target="FunctionTypes"/>
+                </EntitySet>
+                <EntitySet Name="FunctionInputFields" EntityType="ModelingService.FunctionInputFields">
+                    <NavigationPropertyBinding Path="environment" Target="Environments"/>
+                    <NavigationPropertyBinding Path="function" Target="Functions"/>
+                    <NavigationPropertyBinding Path="inputFunction" Target="Functions"/>
+                    <NavigationPropertyBinding Path="field" Target="FunctionInputFieldsVH"/>
+                    <NavigationPropertyBinding Path="SiblingEntity" Target="FunctionInputFields"/>
+                </EntitySet>
+                <EntitySet Name="FunctionResultFields" EntityType="ModelingService.FunctionResultFields">
+                    <NavigationPropertyBinding Path="environment" Target="Environments"/>
+                    <NavigationPropertyBinding Path="function" Target="Functions"/>
+                    <NavigationPropertyBinding Path="field" Target="Fields"/>
+                    <NavigationPropertyBinding Path="SiblingEntity" Target="FunctionResultFields"/>
+                </EntitySet>
+                <EntitySet Name="FunctionInputFieldsVH" EntityType="ModelingService.FunctionInputFieldsVH">
+                    <NavigationPropertyBinding Path="environment" Target="Environments"/>
+                </EntitySet>
+                <EntitySet Name="Fields" EntityType="ModelingService.Fields">
+                    <NavigationPropertyBinding Path="environment" Target="Environments"/>
+                </EntitySet>
+                <EntitySet Name="FunctionTypes_texts" EntityType="ModelingService.FunctionTypes_texts"/>
+            </EntityContainer>
+            <EntityType Name="Functions">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                    <PropertyRef Name="IsActiveEntity"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" Nullable="false"/>
+                <NavigationProperty Name="environment" Type="ModelingService.Environments">
+                    <ReferentialConstraint Property="environment_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="environment_ID" Type="Edm.String"/>
+                <Property Name="function" Type="Edm.String"/>
+                <NavigationProperty Name="type" Type="ModelingService.FunctionTypes">
+                    <ReferentialConstraint Property="type_code" ReferencedProperty="code"/>
+                </NavigationProperty>
+                <Property Name="type_code" Type="Edm.String" MaxLength="10" DefaultValue="AL"/>
+                <Property Name="description" Type="Edm.String"/>
+                <NavigationProperty Name="inputFunction" Type="ModelingService.FunctionsVH">
+                    <ReferentialConstraint Property="inputFunction_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="inputFunction_ID" Type="Edm.String"/>
+                <NavigationProperty Name="inputFields" Type="Collection(ModelingService.FunctionInputFields)" Partner="function">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+                <NavigationProperty Name="resultFields" Type="Collection(ModelingService.FunctionResultFields)" Partner="function">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+                <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="true"/>
+                <Property Name="HasActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <Property Name="HasDraftEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <NavigationProperty Name="DraftAdministrativeData" Type="ModelingService.DraftAdministrativeData" ContainsTarget="true"/>
+                <NavigationProperty Name="SiblingEntity" Type="ModelingService.Functions"/>
+            </EntityType>
+            <EntityType Name="Environments">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" Nullable="false"/>
+                <Property Name="environment" Type="Edm.String"/>
+                <Property Name="version" Type="Edm.String"/>
+                <Property Name="description" Type="Edm.String"/>
+            </EntityType>
+            <EntityType Name="FunctionTypes">
+                <Key>
+                    <PropertyRef Name="code"/>
+                </Key>
+                <Property Name="name" Type="Edm.String" MaxLength="255"/>
+                <Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+                <Property Name="code" Type="Edm.String" MaxLength="10" Nullable="false" DefaultValue="AL"/>
+                <NavigationProperty Name="texts" Type="Collection(ModelingService.FunctionTypes_texts)">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+                <NavigationProperty Name="localized" Type="ModelingService.FunctionTypes_texts">
+                    <ReferentialConstraint Property="code" ReferencedProperty="code"/>
+                </NavigationProperty>
+            </EntityType>
+            <EntityType Name="FunctionsVH">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <NavigationProperty Name="environment" Type="ModelingService.Environments">
+                    <ReferentialConstraint Property="environment_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="environment_ID" Type="Edm.String"/>
+                <Property Name="ID" Type="Edm.String" Nullable="false"/>
+                <NavigationProperty Name="type" Type="ModelingService.FunctionTypes">
+                    <ReferentialConstraint Property="type_code" ReferencedProperty="code"/>
+                </NavigationProperty>
+                <Property Name="type_code" Type="Edm.String" MaxLength="10" DefaultValue="AL"/>
+                <Property Name="description" Type="Edm.String"/>
+                <Property Name="parameter1" Type="Edm.String"/>
+            </EntityType>
+            <EntityType Name="FunctionInputFields">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                    <PropertyRef Name="IsActiveEntity"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" Nullable="false"/>
+                <NavigationProperty Name="environment" Type="ModelingService.Environments">
+                    <ReferentialConstraint Property="environment_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="environment_ID" Type="Edm.String"/>
+                <NavigationProperty Name="function" Type="ModelingService.Functions" Partner="inputFields">
+                    <ReferentialConstraint Property="function_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="function_ID" Type="Edm.String"/>
+                <NavigationProperty Name="inputFunction" Type="ModelingService.Functions">
+                    <ReferentialConstraint Property="inputFunction_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="inputFunction_ID" Type="Edm.String"/>
+                <NavigationProperty Name="field" Type="ModelingService.FunctionInputFieldsVH"/>
+                <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="true"/>
+                <Property Name="HasActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <Property Name="HasDraftEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <NavigationProperty Name="DraftAdministrativeData" Type="ModelingService.DraftAdministrativeData" ContainsTarget="true"/>
+                <NavigationProperty Name="SiblingEntity" Type="ModelingService.FunctionInputFields"/>
+            </EntityType>
+            <EntityType Name="FunctionResultFields">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                    <PropertyRef Name="IsActiveEntity"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" Nullable="false"/>
+                <NavigationProperty Name="environment" Type="ModelingService.Environments">
+                    <ReferentialConstraint Property="environment_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="environment_ID" Type="Edm.String"/>
+                <NavigationProperty Name="function" Type="ModelingService.Functions" Partner="resultFields">
+                    <ReferentialConstraint Property="function_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="function_ID" Type="Edm.String"/>
+                <NavigationProperty Name="field" Type="ModelingService.Fields">
+                    <ReferentialConstraint Property="field_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="field_ID" Type="Edm.String"/>
+                <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="true"/>
+                <Property Name="HasActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <Property Name="HasDraftEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <NavigationProperty Name="DraftAdministrativeData" Type="ModelingService.DraftAdministrativeData" ContainsTarget="true"/>
+                <NavigationProperty Name="SiblingEntity" Type="ModelingService.FunctionResultFields"/>
+            </EntityType>
+            <EntityType Name="FunctionInputFieldsVH">
+                <NavigationProperty Name="environment" Type="ModelingService.Environments">
+                    <ReferentialConstraint Property="environment_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="environment_ID" Type="Edm.String"/>
+                <Property Name="ID" Type="Edm.String"/>
+                <Property Name="description" Type="Edm.String"/>
+                <Property Name="function_ID" Type="Edm.String"/>
+            </EntityType>
+            <EntityType Name="Fields">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" Nullable="false"/>
+                <NavigationProperty Name="environment" Type="ModelingService.Environments">
+                    <ReferentialConstraint Property="environment_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="environment_ID" Type="Edm.String"/>
+                <Property Name="description" Type="Edm.String"/>
+            </EntityType>
+            <EntityType Name="DraftAdministrativeData">
+                <Key>
+                    <PropertyRef Name="DraftUUID"/>
+                </Key>
+                <Property Name="DraftUUID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="CreationDateTime" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="CreatedByUser" Type="Edm.String" MaxLength="256"/>
+                <Property Name="DraftIsCreatedByMe" Type="Edm.Boolean"/>
+                <Property Name="LastChangeDateTime" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="LastChangedByUser" Type="Edm.String" MaxLength="256"/>
+                <Property Name="InProcessByUser" Type="Edm.String" MaxLength="256"/>
+                <Property Name="DraftIsProcessedByMe" Type="Edm.Boolean"/>
+            </EntityType>
+            <EntityType Name="FunctionTypes_texts">
+                <Key>
+                    <PropertyRef Name="locale"/>
+                    <PropertyRef Name="code"/>
+                </Key>
+                <Property Name="locale" Type="Edm.String" MaxLength="14" Nullable="false"/>
+                <Property Name="name" Type="Edm.String" MaxLength="255"/>
+                <Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+                <Property Name="code" Type="Edm.String" MaxLength="10" Nullable="false" DefaultValue="AL"/>
+            </EntityType>
+            <Action Name="draftPrepare" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="ModelingService.Functions"/>
+                <Parameter Name="SideEffectsQualifier" Type="Edm.String"/>
+                <ReturnType Type="ModelingService.Functions"/>
+            </Action>
+            <Action Name="draftPrepare" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="ModelingService.FunctionInputFields"/>
+                <Parameter Name="SideEffectsQualifier" Type="Edm.String"/>
+                <ReturnType Type="ModelingService.FunctionInputFields"/>
+            </Action>
+            <Action Name="draftPrepare" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="ModelingService.FunctionResultFields"/>
+                <Parameter Name="SideEffectsQualifier" Type="Edm.String"/>
+                <ReturnType Type="ModelingService.FunctionResultFields"/>
+            </Action>
+            <Action Name="draftActivate" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="ModelingService.Functions"/>
+                <ReturnType Type="ModelingService.Functions"/>
+            </Action>
+            <Action Name="draftEdit" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="ModelingService.Functions"/>
+                <Parameter Name="PreserveChanges" Type="Edm.Boolean"/>
+                <ReturnType Type="ModelingService.Functions"/>
+            </Action>
+            <Annotations Target="ModelingService.EntityContainer/Functions">
+                <Annotation Term="Common.DraftRoot">
+                    <Record Type="Common.DraftRootType">
+                        <PropertyValue Property="ActivationAction" String="ModelingService.draftActivate"/>
+                        <PropertyValue Property="EditAction" String="ModelingService.draftEdit"/>
+                        <PropertyValue Property="PreparationAction" String="ModelingService.draftPrepare"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="ModelingService.Functions/ID">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="ModelingService.Functions/environment_ID">
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="Label" String="Environments"/>
+                        <PropertyValue Property="CollectionPath" String="Environments"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="environment_ID"/>
+                                    <PropertyValue Property="ValueListProperty" String="ID"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="ModelingService.Functions/type_code">
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="Label" String="FunctionTypes"/>
+                        <PropertyValue Property="CollectionPath" String="FunctionTypes"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="type_code"/>
+                                    <PropertyValue Property="ValueListProperty" String="code"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="name"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="ModelingService.Functions/inputFunction_ID">
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="Label" String="FunctionsVH"/>
+                        <PropertyValue Property="CollectionPath" String="FunctionsVH"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="inputFunction_ID"/>
+                                    <PropertyValue Property="ValueListProperty" String="ID"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="ModelingService.Functions/IsActiveEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="ModelingService.Functions/HasActiveEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="ModelingService.Functions/HasDraftEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="ModelingService.Functions/DraftAdministrativeData">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="ModelingService.Environments/ID">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="ModelingService.FunctionTypes">
+                <Annotation Term="UI.Identification">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="name"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="ModelingService.FunctionTypes/name">
+                <Annotation Term="Common.Label" String="{i18n>Name}"/>
+                </Annotations>
+                <Annotations Target="ModelingService.FunctionTypes/descr">
+                    <Annotation Term="Common.Label" String="{i18n>Description}"/>
+                    </Annotations>
+                    <Annotations Target="ModelingService.FunctionTypes/code">
+                        <Annotation Term="Validation.AllowedValues">
+                            <Collection>
+                                <Record Type="Validation.AllowedValue">
+                                    <Annotation Term="Core.SymbolicName" String="ModelTable"/>
+                                    <PropertyValue Property="Value" String="MT"/>
+                                </Record>
+                                <Record Type="Validation.AllowedValue">
+                                    <Annotation Term="Core.SymbolicName" String="ModelView"/>
+                                    <PropertyValue Property="Value" String="MV"/>
+                                </Record>
+                                <Record Type="Validation.AllowedValue">
+                                    <Annotation Term="Core.SymbolicName" String="Allocation"/>
+                                    <PropertyValue Property="Value" String="AL"/>
+                                </Record>
+                                <Record Type="Validation.AllowedValue">
+                                    <Annotation Term="Core.SymbolicName" String="Calculation"/>
+                                    <PropertyValue Property="Value" String="CA"/>
+                                </Record>
+                                <Record Type="Validation.AllowedValue">
+                                    <Annotation Term="Core.SymbolicName" String="Query"/>
+                                    <PropertyValue Property="Value" String="QE"/>
+                                </Record>
+                            </Collection>
+                        </Annotation>
+                    </Annotations>
+                    <Annotations Target="ModelingService.FunctionsVH/environment_ID">
+                        <Annotation Term="Common.ValueList">
+                            <Record Type="Common.ValueListType">
+                                <PropertyValue Property="Label" String="Environments"/>
+                                <PropertyValue Property="CollectionPath" String="Environments"/>
+                                <PropertyValue Property="Parameters">
+                                    <Collection>
+                                        <Record Type="Common.ValueListParameterInOut">
+                                            <PropertyValue Property="LocalDataProperty" PropertyPath="environment_ID"/>
+                                            <PropertyValue Property="ValueListProperty" String="ID"/>
+                                        </Record>
+                                    </Collection>
+                                </PropertyValue>
+                            </Record>
+                        </Annotation>
+                    </Annotations>
+                    <Annotations Target="ModelingService.FunctionsVH/ID">
+                        <Annotation Term="UI.Hidden" Bool="true"/>
+                    </Annotations>
+                    <Annotations Target="ModelingService.FunctionsVH/type_code">
+                        <Annotation Term="Common.ValueList">
+                            <Record Type="Common.ValueListType">
+                                <PropertyValue Property="Label" String="FunctionTypes"/>
+                                <PropertyValue Property="CollectionPath" String="FunctionTypes"/>
+                                <PropertyValue Property="Parameters">
+                                    <Collection>
+                                        <Record Type="Common.ValueListParameterInOut">
+                                            <PropertyValue Property="LocalDataProperty" PropertyPath="type_code"/>
+                                            <PropertyValue Property="ValueListProperty" String="code"/>
+                                        </Record>
+                                        <Record Type="Common.ValueListParameterDisplayOnly">
+                                            <PropertyValue Property="ValueListProperty" String="name"/>
+                                        </Record>
+                                    </Collection>
+                                </PropertyValue>
+                            </Record>
+                        </Annotation>
+                    </Annotations>
+                    <Annotations Target="ModelingService.EntityContainer/FunctionInputFields">
+                        <Annotation Term="Common.DraftNode">
+                            <Record Type="Common.DraftNodeType">
+                                <PropertyValue Property="PreparationAction" String="ModelingService.draftPrepare"/>
+                            </Record>
+                        </Annotation>
+                    </Annotations>
+                    <Annotations Target="ModelingService.FunctionInputFields/ID">
+                        <Annotation Term="UI.Hidden" Bool="true"/>
+                    </Annotations>
+                    <Annotations Target="ModelingService.FunctionInputFields/environment_ID">
+                        <Annotation Term="Common.ValueList">
+                            <Record Type="Common.ValueListType">
+                                <PropertyValue Property="Label" String="Environments"/>
+                                <PropertyValue Property="CollectionPath" String="Environments"/>
+                                <PropertyValue Property="Parameters">
+                                    <Collection>
+                                        <Record Type="Common.ValueListParameterInOut">
+                                            <PropertyValue Property="LocalDataProperty" PropertyPath="environment_ID"/>
+                                            <PropertyValue Property="ValueListProperty" String="ID"/>
+                                        </Record>
+                                    </Collection>
+                                </PropertyValue>
+                            </Record>
+                        </Annotation>
+                    </Annotations>
+                    <Annotations Target="ModelingService.FunctionInputFields/function_ID">
+                        <Annotation Term="Common.ValueList">
+                            <Record Type="Common.ValueListType">
+                                <PropertyValue Property="Label" String="Functions"/>
+                                <PropertyValue Property="CollectionPath" String="Functions"/>
+                                <PropertyValue Property="Parameters">
+                                    <Collection>
+                                        <Record Type="Common.ValueListParameterInOut">
+                                            <PropertyValue Property="LocalDataProperty" PropertyPath="function_ID"/>
+                                            <PropertyValue Property="ValueListProperty" String="ID"/>
+                                        </Record>
+                                    </Collection>
+                                </PropertyValue>
+                            </Record>
+                        </Annotation>
+                    </Annotations>
+                    <Annotations Target="ModelingService.FunctionInputFields/inputFunction_ID">
+                        <Annotation Term="Common.ValueList">
+                            <Record Type="Common.ValueListType">
+                                <PropertyValue Property="Label" String="Functions"/>
+                                <PropertyValue Property="CollectionPath" String="Functions"/>
+                                <PropertyValue Property="Parameters">
+                                    <Collection>
+                                        <Record Type="Common.ValueListParameterInOut">
+                                            <PropertyValue Property="LocalDataProperty" PropertyPath="inputFunction_ID"/>
+                                            <PropertyValue Property="ValueListProperty" String="ID"/>
+                                        </Record>
+                                    </Collection>
+                                </PropertyValue>
+                            </Record>
+                        </Annotation>
+                    </Annotations>
+                    <Annotations Target="ModelingService.FunctionInputFields/IsActiveEntity">
+                        <Annotation Term="UI.Hidden" Bool="true"/>
+                    </Annotations>
+                    <Annotations Target="ModelingService.FunctionInputFields/HasActiveEntity">
+                        <Annotation Term="UI.Hidden" Bool="true"/>
+                    </Annotations>
+                    <Annotations Target="ModelingService.FunctionInputFields/HasDraftEntity">
+                        <Annotation Term="UI.Hidden" Bool="true"/>
+                    </Annotations>
+                    <Annotations Target="ModelingService.FunctionInputFields/DraftAdministrativeData">
+                        <Annotation Term="UI.Hidden" Bool="true"/>
+                    </Annotations>
+                    <Annotations Target="ModelingService.EntityContainer/FunctionResultFields">
+                        <Annotation Term="Common.DraftNode">
+                            <Record Type="Common.DraftNodeType">
+                                <PropertyValue Property="PreparationAction" String="ModelingService.draftPrepare"/>
+                            </Record>
+                        </Annotation>
+                    </Annotations>
+                    <Annotations Target="ModelingService.FunctionResultFields/ID">
+                        <Annotation Term="UI.Hidden" Bool="true"/>
+                    </Annotations>
+                    <Annotations Target="ModelingService.FunctionResultFields/environment_ID">
+                        <Annotation Term="Common.ValueList">
+                            <Record Type="Common.ValueListType">
+                                <PropertyValue Property="Label" String="Environments"/>
+                                <PropertyValue Property="CollectionPath" String="Environments"/>
+                                <PropertyValue Property="Parameters">
+                                    <Collection>
+                                        <Record Type="Common.ValueListParameterInOut">
+                                            <PropertyValue Property="LocalDataProperty" PropertyPath="environment_ID"/>
+                                            <PropertyValue Property="ValueListProperty" String="ID"/>
+                                        </Record>
+                                    </Collection>
+                                </PropertyValue>
+                            </Record>
+                        </Annotation>
+                    </Annotations>
+                    <Annotations Target="ModelingService.FunctionResultFields/function_ID">
+                        <Annotation Term="Common.ValueList">
+                            <Record Type="Common.ValueListType">
+                                <PropertyValue Property="Label" String="Functions"/>
+                                <PropertyValue Property="CollectionPath" String="Functions"/>
+                                <PropertyValue Property="Parameters">
+                                    <Collection>
+                                        <Record Type="Common.ValueListParameterInOut">
+                                            <PropertyValue Property="LocalDataProperty" PropertyPath="function_ID"/>
+                                            <PropertyValue Property="ValueListProperty" String="ID"/>
+                                        </Record>
+                                    </Collection>
+                                </PropertyValue>
+                            </Record>
+                        </Annotation>
+                    </Annotations>
+                    <Annotations Target="ModelingService.FunctionResultFields/field_ID">
+                        <Annotation Term="Common.ValueList">
+                            <Record Type="Common.ValueListType">
+                                <PropertyValue Property="Label" String="Fields"/>
+                                <PropertyValue Property="CollectionPath" String="Fields"/>
+                                <PropertyValue Property="Parameters">
+                                    <Collection>
+                                        <Record Type="Common.ValueListParameterInOut">
+                                            <PropertyValue Property="LocalDataProperty" PropertyPath="field_ID"/>
+                                            <PropertyValue Property="ValueListProperty" String="ID"/>
+                                        </Record>
+                                        <Record Type="Common.ValueListParameterDisplayOnly">
+                                            <PropertyValue Property="ValueListProperty" String="description"/>
+                                        </Record>
+                                    </Collection>
+                                </PropertyValue>
+                            </Record>
+                        </Annotation>
+                    </Annotations>
+                    <Annotations Target="ModelingService.FunctionResultFields/IsActiveEntity">
+                        <Annotation Term="UI.Hidden" Bool="true"/>
+                    </Annotations>
+                    <Annotations Target="ModelingService.FunctionResultFields/HasActiveEntity">
+                        <Annotation Term="UI.Hidden" Bool="true"/>
+                    </Annotations>
+                    <Annotations Target="ModelingService.FunctionResultFields/HasDraftEntity">
+                        <Annotation Term="UI.Hidden" Bool="true"/>
+                    </Annotations>
+                    <Annotations Target="ModelingService.FunctionResultFields/DraftAdministrativeData">
+                        <Annotation Term="UI.Hidden" Bool="true"/>
+                    </Annotations>
+                    <Annotations Target="ModelingService.FunctionInputFieldsVH/environment_ID">
+                        <Annotation Term="Common.ValueList">
+                            <Record Type="Common.ValueListType">
+                                <PropertyValue Property="Label" String="Environments"/>
+                                <PropertyValue Property="CollectionPath" String="Environments"/>
+                                <PropertyValue Property="Parameters">
+                                    <Collection>
+                                        <Record Type="Common.ValueListParameterInOut">
+                                            <PropertyValue Property="LocalDataProperty" PropertyPath="environment_ID"/>
+                                            <PropertyValue Property="ValueListProperty" String="ID"/>
+                                        </Record>
+                                    </Collection>
+                                </PropertyValue>
+                            </Record>
+                        </Annotation>
+                    </Annotations>
+                    <Annotations Target="ModelingService.FunctionInputFieldsVH/ID">
+                        <Annotation Term="UI.Hidden" Bool="true"/>
+                    </Annotations>
+                    <Annotations Target="ModelingService.FunctionInputFieldsVH/function_ID">
+                        <Annotation Term="UI.Hidden" Bool="true"/>
+                    </Annotations>
+                    <Annotations Target="ModelingService.Fields/ID">
+                        <Annotation Term="UI.Hidden" Bool="true"/>
+                    </Annotations>
+                    <Annotations Target="ModelingService.Fields/environment_ID">
+                        <Annotation Term="Common.ValueList">
+                            <Record Type="Common.ValueListType">
+                                <PropertyValue Property="Label" String="Environments"/>
+                                <PropertyValue Property="CollectionPath" String="Environments"/>
+                                <PropertyValue Property="Parameters">
+                                    <Collection>
+                                        <Record Type="Common.ValueListParameterInOut">
+                                            <PropertyValue Property="LocalDataProperty" PropertyPath="environment_ID"/>
+                                            <PropertyValue Property="ValueListProperty" String="ID"/>
+                                        </Record>
+                                    </Collection>
+                                </PropertyValue>
+                            </Record>
+                        </Annotation>
+                    </Annotations>
+                    <Annotations Target="ModelingService.DraftAdministrativeData">
+                        <Annotation Term="Common.Label" String="{i18n>Draft_DraftAdministrativeData}"/>
+                        </Annotations>
+                        <Annotations Target="ModelingService.DraftAdministrativeData/DraftUUID">
+                            <Annotation Term="UI.Hidden" Bool="true"/>
+                            <Annotation Term="Common.Label" String="{i18n>Draft_DraftUUID}"/>
+                            </Annotations>
+                            <Annotations Target="ModelingService.DraftAdministrativeData/CreationDateTime">
+                                <Annotation Term="Common.Label" String="{i18n>Draft_CreationDateTime}"/>
+                                </Annotations>
+                                <Annotations Target="ModelingService.DraftAdministrativeData/CreatedByUser">
+                                    <Annotation Term="Common.Label" String="{i18n>Draft_CreatedByUser}"/>
+                                    </Annotations>
+                                    <Annotations Target="ModelingService.DraftAdministrativeData/DraftIsCreatedByMe">
+                                        <Annotation Term="UI.Hidden" Bool="true"/>
+                                        <Annotation Term="Common.Label" String="{i18n>Draft_DraftIsCreatedByMe}"/>
+                                        </Annotations>
+                                        <Annotations Target="ModelingService.DraftAdministrativeData/LastChangeDateTime">
+                                            <Annotation Term="Common.Label" String="{i18n>Draft_LastChangeDateTime}"/>
+                                            </Annotations>
+                                            <Annotations Target="ModelingService.DraftAdministrativeData/LastChangedByUser">
+                                                <Annotation Term="Common.Label" String="{i18n>Draft_LastChangedByUser}"/>
+                                                </Annotations>
+                                                <Annotations Target="ModelingService.DraftAdministrativeData/InProcessByUser">
+                                                    <Annotation Term="Common.Label" String="{i18n>Draft_InProcessByUser}"/>
+                                                    </Annotations>
+                                                    <Annotations Target="ModelingService.DraftAdministrativeData/DraftIsProcessedByMe">
+                                                        <Annotation Term="UI.Hidden" Bool="true"/>
+                                                        <Annotation Term="Common.Label" String="{i18n>Draft_DraftIsProcessedByMe}"/>
+                                                        </Annotations>
+                                                        <Annotations Target="ModelingService.FunctionTypes_texts/name">
+                                                            <Annotation Term="Common.Label" String="{i18n>Name}"/>
+                                                            </Annotations>
+                                                            <Annotations Target="ModelingService.FunctionTypes_texts/descr">
+                                                                <Annotation Term="Common.Label" String="{i18n>Description}"/>
+                                                                </Annotations>
+                                                                <Annotations Target="ModelingService.FunctionTypes_texts/code">
+                                                                    <Annotation Term="Validation.AllowedValues">
+                                                                        <Collection>
+                                                                            <Record Type="Validation.AllowedValue">
+                                                                                <Annotation Term="Core.SymbolicName" String="ModelTable"/>
+                                                                                <PropertyValue Property="Value" String="MT"/>
+                                                                            </Record>
+                                                                            <Record Type="Validation.AllowedValue">
+                                                                                <Annotation Term="Core.SymbolicName" String="ModelView"/>
+                                                                                <PropertyValue Property="Value" String="MV"/>
+                                                                            </Record>
+                                                                            <Record Type="Validation.AllowedValue">
+                                                                                <Annotation Term="Core.SymbolicName" String="Allocation"/>
+                                                                                <PropertyValue Property="Value" String="AL"/>
+                                                                            </Record>
+                                                                            <Record Type="Validation.AllowedValue">
+                                                                                <Annotation Term="Core.SymbolicName" String="Calculation"/>
+                                                                                <PropertyValue Property="Value" String="CA"/>
+                                                                            </Record>
+                                                                            <Record Type="Validation.AllowedValue">
+                                                                                <Annotation Term="Core.SymbolicName" String="Query"/>
+                                                                                <PropertyValue Property="Value" String="QE"/>
+                                                                            </Record>
+                                                                        </Collection>
+                                                                    </Annotation>
+                                                                </Annotations>
+                                                            </Schema>
+                                                        </edmx:DataServices>
+                                                    </edmx:Edmx>
