@@ -30,7 +30,8 @@ CREATE TABLE FunctionInputFields (
   function_ID NVARCHAR(36),
   inputFunction_ID NVARCHAR(36),
   field_ID NVARCHAR(36),
-  PRIMARY KEY(ID)
+  PRIMARY KEY(ID),
+  CONSTRAINT FunctionInputFields_inputFunctionField UNIQUE (inputFunction_ID, field_ID)
 );
 
 CREATE TABLE FunctionResultFields (
@@ -125,6 +126,13 @@ CREATE VIEW FunctionsVH AS SELECT
 FROM Functions AS Functions_0
 WHERE Functions_0.type_code IN ('MT', 'AL', 'CA');
 
+CREATE VIEW FunctionInputFieldsVH AS SELECT
+  Fields_0.ID,
+  Fields_0.environment_ID,
+  Fields_0.description,
+  FunctionResultFields_1.function_ID AS function_ID
+FROM (Fields AS Fields_0 LEFT JOIN FunctionResultFields AS FunctionResultFields_1 ON Fields_0.ID = FunctionResultFields_1.field_ID AND Fields_0.environment_ID = FunctionResultFields_1.environment_ID);
+
 CREATE VIEW ModelingService_Environments AS SELECT
   Environments_0.ID,
   Environments_0.environment,
@@ -214,6 +222,13 @@ CREATE VIEW ModelingService_FunctionsVH AS SELECT
   FunctionsVH_0.description,
   FunctionsVH_0.parameter1
 FROM FunctionsVH AS FunctionsVH_0;
+
+CREATE VIEW ModelingService_FunctionInputFieldsVH AS SELECT
+  FunctionInputFieldsVH_0.ID,
+  FunctionInputFieldsVH_0.environment_ID,
+  FunctionInputFieldsVH_0.description,
+  FunctionInputFieldsVH_0.function_ID
+FROM FunctionInputFieldsVH AS FunctionInputFieldsVH_0;
 
 CREATE VIEW localized_FunctionsVH AS SELECT
   Functions_0.environment_ID,

@@ -35,7 +35,7 @@ entity Fields {
 
 @cds.autoexpose
 @cds.odata.valuelist
-entity FunctionsVH as projection on Functions {
+entity FunctionsVH           as projection on Functions {
     environment,
     ID,
     type,
@@ -46,19 +46,19 @@ entity FunctionsVH as projection on Functions {
         'MT', 'AL', 'CA')
     );
 
-
-@cds.autoexpose
-@cds.odata.valuelist
+@assert.unique : {inputFunctionField : [
+    inputFunction,
+    field,
+], }
 entity FunctionInputFields {
     key ID            : UUID @odata.Type : 'Edm.String'  @UI.Hidden;
         environment   : Association to one Environments;
         function      : Association to one Functions;
         inputFunction : Association to one Functions;
-        field         : Association to one Fields;
+        field         : Association to one FunctionInputFieldsVH;
 }
 
-@cds.autoexpose
-@cds.odata.valuelist
+
 entity FunctionResultFields {
     key ID          : UUID @odata.Type : 'Edm.String'  @UI.Hidden;
         environment : Association to one Environments;
@@ -66,12 +66,19 @@ entity FunctionResultFields {
         field       : Association to one Fields;
 }
 
-// @cds.autoexpose
-// @cds.odata.valuelist
-// entity FunctionInputFieldsVH as projection on FunctionResultFields {
-//     *,
-//     function.ID as parameter1
-// };
+@cds.autoexpose
+@cds.odata.valuelist
+entity FunctionInputFieldsVH as
+    select from Fields
+    left join FunctionResultFields
+        on  Fields.ID             = FunctionResultFields.field.ID
+        and Fields.environment.ID = FunctionResultFields.environment.ID
+    {
+        key Fields.ID,
+            Fields.environment,
+            Fields.description,
+            FunctionResultFields.function.ID as function_ID
+    };
 
 type FunctionType @(assert.range) : String(10) enum {
     ModelTable  = 'MT';
