@@ -25,6 +25,18 @@ entity Functions {
                             on resultFields.function = $self;
 }
 
+@assert.unique : {inputFunctionField : [
+    inputFunction,
+    field,
+], }
+entity FunctionInputFields {
+    key ID            : UUID @odata.Type : 'Edm.String'  @UI.Hidden;
+        environment   : Association to one Environments;
+        function      : Association to one Functions;
+        inputFunction : Association to one Functions;
+        field         : Association to one FunctionInputFieldsVH;
+}
+
 @cds.autoexpose
 @cds.odata.valuelist
 entity Fields {
@@ -45,19 +57,6 @@ entity FunctionsVH           as projection on Functions {
     type.code in (
         'MT', 'AL', 'CA')
     );
-
-@assert.unique : {inputFunctionField : [
-    inputFunction,
-    field,
-], }
-entity FunctionInputFields {
-    key ID            : UUID @odata.Type : 'Edm.String'  @UI.Hidden;
-        environment   : Association to one Environments;
-        function      : Association to one Functions;
-        inputFunction : Association to one Functions;
-        field         : Association to one FunctionInputFieldsVH;
-}
-
 
 entity FunctionResultFields {
     key ID          : UUID @odata.Type : 'Edm.String'  @UI.Hidden;
