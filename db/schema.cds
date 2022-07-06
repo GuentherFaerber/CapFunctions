@@ -31,7 +31,7 @@ entity Functions {
 ], }
 entity FunctionInputFields {
     key ID            : UUID @odata.Type : 'Edm.String'  @UI.Hidden;
-        environment   : Association to one Environments;
+        environment   : Association to one Environments @assert.target;
         function      : Association to one Functions;
         inputFunction : Association to one Functions;
         field         : Association to one FunctionInputFieldsVH;
