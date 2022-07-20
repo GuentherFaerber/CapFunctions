@@ -155,6 +155,12 @@
                                         "creationMode": {
                                             "name": "Inline"
                                         }
+                                    },
+                                    "actions": {
+                                        "customActionCreate": {
+                                            "press": "functions.ext.fragment.Selections.onOpenValueHelp",
+                                            "text": "Custom create"
+                                        }
                                     }
                                 }
                             }
