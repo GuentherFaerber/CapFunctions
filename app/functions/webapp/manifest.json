@@ -159,6 +159,7 @@
                                     "actions": {
                                         "customActionCreate": {
                                             "press": "functions.ext.fragment.Selections.onOpenValueHelp",
+                                            "visible": "{= ${ui>/isEditable}}",
                                             "text": "Custom create"
                                         }
                                     }
