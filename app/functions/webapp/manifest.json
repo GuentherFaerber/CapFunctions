@@ -169,6 +169,15 @@
                     }
                 }
             }
+        },
+        "extends": {
+            "extensions": {
+                "sap.ui.controllerExtensions": {
+                    "sap.fe.templates.ObjectPage.ObjectPageController#functions::FunctionsObjectPage": {
+                        "controllerName": "functions.ext.CustomController"
+                    }
+                }
+            }
         }
     },
     "sap.fiori": {
