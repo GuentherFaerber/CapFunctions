@@ -1,0 +1,26 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog
+		noDataText="No Fields Found"
+		title="Select Field"
+		search=".onSearch"
+		confirm=".onValueHelpDialogClose"
+		cancel=".onValueHelpDialogClose"
+		showClearButton="true"
+		multiSelect="true"
+		items="{
+			path: '/FunctionInputFieldsVH',
+			sorter: {
+				path: 'description',
+				descending: false
+			}
+		}">
+		<StandardListItem
+			title="{ID}"
+			description="{description}"
+			iconDensityAware="false"
+			iconInset="false"
+			type="Active" />
+	</SelectDialog>
+</core:FragmentDefinition>

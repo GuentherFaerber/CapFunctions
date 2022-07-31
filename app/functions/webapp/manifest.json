@@ -155,10 +155,26 @@
                                         "creationMode": {
                                             "name": "Inline"
                                         }
+                                    },
+                                    "actions": {
+                                        "customActionCreate": {
+                                            "press": "functions.ext.fragment.Selections.onOpenValueHelp",
+                                            "visible": "{= ${ui>/isEditable}}",
+                                            "text": "Custom create"
+                                        }
                                     }
                                 }
                             }
                         }
+                    }
+                }
+            }
+        },
+        "extends": {
+            "extensions": {
+                "sap.ui.controllerExtensions": {
+                    "sap.fe.templates.ObjectPage.ObjectPageController#functions::FunctionsObjectPage": {
+                        "controllerName": "functions.ext.CustomController"
                     }
                 }
             }
